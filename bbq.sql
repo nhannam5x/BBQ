@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th9 27, 2020 lúc 07:51 AM
+-- Thời gian đã tạo: Th10 28, 2020 lúc 08:38 AM
 -- Phiên bản máy phục vụ: 10.4.11-MariaDB
 -- Phiên bản PHP: 7.4.6
 
@@ -24,23 +24,16 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Cấu trúc bảng cho bảng `admin`
+-- Cấu trúc bảng cho bảng `account`
 --
 
-CREATE TABLE `admin` (
-  `id_admin` int(11) NOT NULL,
-  `name_admin` varchar(255) NOT NULL,
-  `status_login` int(11) NOT NULL,
-  `user_admin` varchar(255) NOT NULL,
-  `user_password` varchar(255) NOT NULL
+CREATE TABLE `account` (
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `access` int(255) NOT NULL,
+  `id_crew` int(255) NOT NULL,
+  `status_account` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Đang đổ dữ liệu cho bảng `admin`
---
-
-INSERT INTO `admin` (`id_admin`, `name_admin`, `status_login`, `user_admin`, `user_password`) VALUES
-(1, 'Le Cong Anh Minh', 0, 'admin', '12345678');
 
 -- --------------------------------------------------------
 
@@ -49,12 +42,32 @@ INSERT INTO `admin` (`id_admin`, `name_admin`, `status_login`, `user_admin`, `us
 --
 
 CREATE TABLE `bill` (
-  `id_bill` int(11) NOT NULL,
-  `id_product` int(11) NOT NULL,
-  `id_user` int(11) NOT NULL,
-  `name_product` varchar(255) NOT NULL,
-  `name_user` varchar(255) NOT NULL,
-  `toal_bill` int(11) NOT NULL
+  `id_bill` int(255) NOT NULL,
+  `sum` int(255) NOT NULL,
+  `date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `id_crew` int(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `bill_details`
+--
+
+CREATE TABLE `bill_details` (
+  `id_bill` int(255) NOT NULL,
+  `id_member` int(255) NOT NULL,
+  `id_crew` int(255) NOT NULL,
+  `id_combo` int(255) NOT NULL,
+  `id_sale` int(255) NOT NULL,
+  `id_dish` int(255) NOT NULL,
+  `sum` int(255) NOT NULL,
+  `date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `quantity_combo` int(255) NOT NULL,
+  `quantity_dish` int(255) NOT NULL,
+  `name_dish` int(255) NOT NULL,
+  `name_crew` int(255) NOT NULL,
+  `status_bill` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -65,247 +78,241 @@ CREATE TABLE `bill` (
 
 CREATE TABLE `cart` (
   `id_cart` int(11) NOT NULL,
+  `id_table` int(255) NOT NULL,
+  `id_menu` int(255) NOT NULL,
+  `quantity_dish` int(255) NOT NULL,
+  `id_dish` int(255) NOT NULL,
+  `id_combo` int(255) NOT NULL,
+  `status_waitting` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `combo`
+--
+
+CREATE TABLE `combo` (
+  `id_combo` int(255) NOT NULL,
+  `name_combo` varchar(255) NOT NULL,
+  `price_combo` int(255) NOT NULL,
+  `status_combo` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `crew`
+--
+
+CREATE TABLE `crew` (
+  `id_crew` int(255) NOT NULL,
+  `name_crew` varchar(255) NOT NULL,
+  `phone` varchar(255) NOT NULL,
+  `sex` varchar(255) NOT NULL,
+  `position` varchar(255) NOT NULL,
+  `gmail` varchar(255) NOT NULL,
+  `salary` int(255) NOT NULL,
+  `shift` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `img` varchar(255) NOT NULL,
+  `status_crew` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Đang đổ dữ liệu cho bảng `crew`
+--
+
+INSERT INTO `crew` (`id_crew`, `name_crew`, `phone`, `sex`, `position`, `gmail`, `salary`, `shift`, `img`, `status_crew`) VALUES
+(1, 'minh', '0123456789', 'male', 'thu ngan', 'qwasdsdsas@gmail.com', 2000000, '2020-11-28 01:39:49', '', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `dish`
+--
+
+CREATE TABLE `dish` (
+  `id_dish` int(255) NOT NULL,
+  `name_dish` int(255) NOT NULL,
+  `price_dish` int(255) NOT NULL,
+  `status_dish` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `member`
+--
+
+CREATE TABLE `member` (
+  `id_member` int(11) NOT NULL,
+  `name_member` varchar(255) NOT NULL,
+  `phonenumber` varchar(255) NOT NULL,
+  `quantity_table` int(255) NOT NULL,
+  `summary` int(255) NOT NULL,
+  `status_member` int(11) NOT NULL,
+  `id_combo` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `menu`
+--
+
+CREATE TABLE `menu` (
+  `id_combo` int(255) NOT NULL,
+  `id_dish` int(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `storage`
+--
+
+CREATE TABLE `storage` (
+  `id_product` int(255) NOT NULL,
+  `quantity_product` int(255) NOT NULL,
+  `status_product` int(8) NOT NULL,
+  `expiry_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `supplier`
+--
+
+CREATE TABLE `supplier` (
+  `id_supplier` int(11) NOT NULL,
+  `name_supplier` varchar(255) NOT NULL,
+  `phone` int(255) NOT NULL,
+  `address` varchar(255) NOT NULL,
+  `status_supplier` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `supplier_details`
+--
+
+CREATE TABLE `supplier_details` (
+  `id_supplier` int(11) NOT NULL,
   `id_product` int(11) NOT NULL,
-  `id_user` int(11) NOT NULL,
-  `name_product` varchar(255) NOT NULL,
-  `total_cart` int(11) NOT NULL
+  `quantity` int(11) NOT NULL,
+  `price_product` int(11) NOT NULL,
+  `date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `status_waitting` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `cashier`
---
-
-CREATE TABLE `cashier` (
-  `id_cashier` int(11) NOT NULL,
-  `name_cashier` varchar(255) NOT NULL,
-  `type_crew` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Đang đổ dữ liệu cho bảng `cashier`
---
-
-INSERT INTO `cashier` (`id_cashier`, `name_cashier`, `type_crew`) VALUES
-(1, 'Le Cong Anh Minh', 'CA');
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `cook`
---
-
-CREATE TABLE `cook` (
-  `id_cook` int(11) NOT NULL,
-  `name_cook` varchar(255) NOT NULL,
-  `type_crew` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Đang đổ dữ liệu cho bảng `cook`
---
-
-INSERT INTO `cook` (`id_cook`, `name_cook`, `type_crew`) VALUES
-(1, 'Lac Khai Minh', 'C');
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `product`
---
-
-CREATE TABLE `product` (
-  `id_product` int(11) NOT NULL,
-  `name_product` varchar(255) NOT NULL,
-  `price_product` float NOT NULL,
-  `type_product` varchar(255) NOT NULL,
-  `image_product` char(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Đang đổ dữ liệu cho bảng `product`
---
-
-INSERT INTO `product` (`id_product`, `name_product`, `price_product`, `type_product`, `image_product`) VALUES
-(1, 'Bo ne', 200, 'DA', '');
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `request_complete`
---
-
-CREATE TABLE `request_complete` (
-  `id_request_complete` int(11) NOT NULL,
-  `id_request` int(11) NOT NULL,
-  `id_table` int(11) NOT NULL,
-  `name_table` varchar(255) NOT NULL,
-  `id_product` int(11) NOT NULL,
-  `name_product` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `request_user`
---
-
-CREATE TABLE `request_user` (
-  `id_request` int(11) NOT NULL,
-  `id_table` int(11) NOT NULL,
-  `name_table` varchar(255) NOT NULL,
-  `id_product` int(11) NOT NULL,
-  `name_product` varchar(255) NOT NULL,
-  `number_product` int(11) NOT NULL,
-  `status_request` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `service`
---
-
-CREATE TABLE `service` (
-  `id_service` int(11) NOT NULL,
-  `name_service` varchar(255) NOT NULL,
-  `type_crew` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Đang đổ dữ liệu cho bảng `service`
---
-
-INSERT INTO `service` (`id_service`, `name_service`, `type_crew`) VALUES
-(1, 'Do Nguyen Nam Nhan', 'S');
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `table`
---
-
-CREATE TABLE `table` (
-  `id_table` int(11) NOT NULL,
-  `name_table` varchar(255) NOT NULL,
-  `status_table` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Đang đổ dữ liệu cho bảng `table`
---
-
-INSERT INTO `table` (`id_table`, `name_table`, `status_table`) VALUES
-(1, 'Table 1', 0);
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `user`
---
-
-CREATE TABLE `user` (
-  `id_user` int(11) NOT NULL,
-  `name_user` varchar(255) NOT NULL,
-  `age_user` int(120) NOT NULL,
-  `phone_user` float NOT NULL,
-  `image_user` char(255) NOT NULL,
-  `height_user` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Đang đổ dữ liệu cho bảng `user`
---
-
-INSERT INTO `user` (`id_user`, `name_user`, `age_user`, `phone_user`, `image_user`, `height_user`) VALUES
-(1, 'vo hoai nam', 20, 582818000, '', 185);
 
 --
 -- Chỉ mục cho các bảng đã đổ
 --
 
 --
--- Chỉ mục cho bảng `admin`
+-- Chỉ mục cho bảng `account`
 --
-ALTER TABLE `admin`
-  ADD PRIMARY KEY (`id_admin`);
+ALTER TABLE `account`
+  ADD KEY `id_crew` (`id_crew`);
 
 --
 -- Chỉ mục cho bảng `bill`
 --
 ALTER TABLE `bill`
-  ADD PRIMARY KEY (`id_bill`);
+  ADD PRIMARY KEY (`id_bill`),
+  ADD KEY `id_bill` (`id_bill`),
+  ADD KEY `id_bill_2` (`id_bill`),
+  ADD KEY `id_crew` (`id_crew`);
+
+--
+-- Chỉ mục cho bảng `bill_details`
+--
+ALTER TABLE `bill_details`
+  ADD KEY `id_dish` (`id_dish`),
+  ADD KEY `id_bill` (`id_bill`),
+  ADD KEY `id_member` (`id_member`),
+  ADD KEY `id_crew` (`id_crew`),
+  ADD KEY `id_combo` (`id_combo`),
+  ADD KEY `id_sale` (`id_sale`);
 
 --
 -- Chỉ mục cho bảng `cart`
 --
 ALTER TABLE `cart`
-  ADD PRIMARY KEY (`id_cart`);
+  ADD PRIMARY KEY (`id_cart`),
+  ADD KEY `id_table` (`id_table`),
+  ADD KEY `id_cart` (`id_cart`),
+  ADD KEY `id_menu` (`id_menu`),
+  ADD KEY `id_dish` (`id_dish`),
+  ADD KEY `id_combo` (`id_combo`);
 
 --
--- Chỉ mục cho bảng `cashier`
+-- Chỉ mục cho bảng `combo`
 --
-ALTER TABLE `cashier`
-  ADD PRIMARY KEY (`id_cashier`);
+ALTER TABLE `combo`
+  ADD PRIMARY KEY (`id_combo`),
+  ADD KEY `id_combo` (`id_combo`);
 
 --
--- Chỉ mục cho bảng `cook`
+-- Chỉ mục cho bảng `crew`
 --
-ALTER TABLE `cook`
-  ADD PRIMARY KEY (`id_cook`);
+ALTER TABLE `crew`
+  ADD PRIMARY KEY (`id_crew`),
+  ADD KEY `id_crew` (`id_crew`);
 
 --
--- Chỉ mục cho bảng `product`
+-- Chỉ mục cho bảng `dish`
 --
-ALTER TABLE `product`
-  ADD PRIMARY KEY (`id_product`);
+ALTER TABLE `dish`
+  ADD PRIMARY KEY (`id_dish`),
+  ADD KEY `id_dish` (`id_dish`);
 
 --
--- Chỉ mục cho bảng `request_complete`
+-- Chỉ mục cho bảng `member`
 --
-ALTER TABLE `request_complete`
-  ADD PRIMARY KEY (`id_request_complete`);
+ALTER TABLE `member`
+  ADD PRIMARY KEY (`id_member`),
+  ADD KEY `id_member` (`id_member`),
+  ADD KEY `id_combo` (`id_combo`);
 
 --
--- Chỉ mục cho bảng `request_user`
+-- Chỉ mục cho bảng `menu`
 --
-ALTER TABLE `request_user`
-  ADD PRIMARY KEY (`id_request`);
+ALTER TABLE `menu`
+  ADD KEY `id_dish` (`id_dish`),
+  ADD KEY `id_combo` (`id_combo`);
 
 --
--- Chỉ mục cho bảng `service`
+-- Chỉ mục cho bảng `storage`
 --
-ALTER TABLE `service`
-  ADD PRIMARY KEY (`id_service`);
+ALTER TABLE `storage`
+  ADD PRIMARY KEY (`id_product`),
+  ADD KEY `id_product` (`id_product`);
 
 --
--- Chỉ mục cho bảng `table`
+-- Chỉ mục cho bảng `supplier`
 --
-ALTER TABLE `table`
-  ADD PRIMARY KEY (`id_table`);
+ALTER TABLE `supplier`
+  ADD PRIMARY KEY (`id_supplier`);
 
 --
--- Chỉ mục cho bảng `user`
+-- Chỉ mục cho bảng `supplier_details`
 --
-ALTER TABLE `user`
-  ADD PRIMARY KEY (`id_user`);
+ALTER TABLE `supplier_details`
+  ADD KEY `id_supplier` (`id_supplier`),
+  ADD KEY `id_product` (`id_product`);
 
 --
 -- AUTO_INCREMENT cho các bảng đã đổ
 --
 
 --
--- AUTO_INCREMENT cho bảng `admin`
---
-ALTER TABLE `admin`
-  MODIFY `id_admin` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
 -- AUTO_INCREMENT cho bảng `bill`
 --
 ALTER TABLE `bill`
-  MODIFY `id_bill` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_bill` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT cho bảng `cart`
@@ -314,52 +321,40 @@ ALTER TABLE `cart`
   MODIFY `id_cart` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `cashier`
+-- AUTO_INCREMENT cho bảng `combo`
 --
-ALTER TABLE `cashier`
-  MODIFY `id_cashier` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+ALTER TABLE `combo`
+  MODIFY `id_combo` int(255) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `cook`
+-- AUTO_INCREMENT cho bảng `crew`
 --
-ALTER TABLE `cook`
-  MODIFY `id_cook` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+ALTER TABLE `crew`
+  MODIFY `id_crew` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT cho bảng `product`
+-- AUTO_INCREMENT cho bảng `dish`
 --
-ALTER TABLE `product`
-  MODIFY `id_product` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+ALTER TABLE `dish`
+  MODIFY `id_dish` int(255) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `request_complete`
+-- AUTO_INCREMENT cho bảng `member`
 --
-ALTER TABLE `request_complete`
-  MODIFY `id_request_complete` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `member`
+  MODIFY `id_member` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `request_user`
+-- AUTO_INCREMENT cho bảng `storage`
 --
-ALTER TABLE `request_user`
-  MODIFY `id_request` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `storage`
+  MODIFY `id_product` int(255) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT cho bảng `service`
+-- AUTO_INCREMENT cho bảng `supplier`
 --
-ALTER TABLE `service`
-  MODIFY `id_service` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT cho bảng `table`
---
-ALTER TABLE `table`
-  MODIFY `id_table` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT cho bảng `user`
---
-ALTER TABLE `user`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+ALTER TABLE `supplier`
+  MODIFY `id_supplier` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
